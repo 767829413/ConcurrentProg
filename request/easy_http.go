@@ -85,7 +85,7 @@ func HandleExec() {
 	}
 }
 
-func BatchExecOpTask(waitSecond time.Duration) {
+func BatchExecOpTask(waitSecond time.Duration, retry int) {
 	url := viper.Get("url").(string)
 	taskUrl := viper.Get("task_url").(string)
 	method := viper.Get("method").(string)
@@ -139,7 +139,7 @@ func BatchExecOpTask(waitSecond time.Duration) {
 			fmt.Println("deploy record id: ", deployRecordId)
 			fmt.Println("result: ", string(b))
 			fmt.Println("Pending")
-			if ooo.Data.Code == 1 || start > 10 {
+			if ooo.Data.Code == 1 || start > retry {
 				// 用完需要释放资源
 				fasthttp.ReleaseResponse(resp)
 				fasthttp.ReleaseRequest(req)

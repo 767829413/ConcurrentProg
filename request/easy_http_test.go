@@ -11,7 +11,7 @@ func TestHandleExec(t *testing.T) {
 }
 
 func TestOpData(t *testing.T) {
-	BatchExecOpTask(2 * time.Second)
+	BatchExecOpTask(1*time.Second, 5)
 }
 
 func TestGetToken(t *testing.T) {
