@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
 	"github.com/valyala/fasthttp"
+	"log"
 	"strconv"
 	"time"
 )
@@ -81,7 +82,7 @@ func HandleExec() {
 			}
 			time.Sleep(1 * time.Second)
 		}
-		fmt.Println("OK")
+		log.Println("OK")
 	}
 }
 
@@ -130,15 +131,15 @@ func BatchExecOpTask(waitSecond time.Duration, retry int) {
 		for {
 			start++
 			if err := fasthttp.Do(req, resp); err != nil {
-				fmt.Println("请求失败:", err.Error())
+				log.Println("请求失败:", err.Error())
 				return
 			}
 			b := resp.Body()
 			ooo := &ddd{}
 			_ = json.Unmarshal(b, ooo)
-			fmt.Println("deploy record id: ", deployRecordId)
-			fmt.Println("result: ", string(b))
-			fmt.Println("Pending")
+			log.Println("deploy record id: ", deployRecordId)
+			log.Println("result: ", string(b))
+			log.Println("Pending")
 			if ooo.Data.Code == 1 || start > retry {
 				// 用完需要释放资源
 				fasthttp.ReleaseResponse(resp)

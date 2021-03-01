@@ -2,6 +2,7 @@ package request
 
 import (
 	"github.com/spf13/viper"
+	"log"
 	"testing"
 	"time"
 )
@@ -11,7 +12,13 @@ func TestHandleExec(t *testing.T) {
 }
 
 func TestOpData(t *testing.T) {
-	BatchExecOpTask(1*time.Second, 5)
+	var tn int
+	for {
+		BatchExecOpTask(1*time.Second, 10)
+		tn += 1
+		log.Println("执行次数: ", tn)
+		time.Sleep(100 * time.Second)
+	}
 }
 
 func TestGetToken(t *testing.T) {
