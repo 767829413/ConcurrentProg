@@ -53,9 +53,9 @@ func HandleExec() {
 			},
 		},
 	)
-	fmt.Println("Bearer " + curToken)
+	log.Println("Bearer " + curToken)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	} else {
 		req, resp := initHttp(
 			url,
@@ -69,14 +69,14 @@ func HandleExec() {
 		}()
 		for {
 			if err := fasthttp.Do(req, resp); err != nil {
-				fmt.Println("请求失败:", err.Error())
+				log.Println("请求失败:", err.Error())
 				return
 			}
 			b := resp.Body()
 			ooo := &ddd{}
 			_ = json.Unmarshal(b, ooo)
-			fmt.Println("result: ", string(b))
-			fmt.Println("Pending")
+			log.Println("result: ", string(b))
+			log.Println("Pending")
 			if ooo.Data.Code == 1 {
 				break
 			}
@@ -123,31 +123,7 @@ func BatchExecOpTask(waitSecond time.Duration, retry int) {
 				},
 			},
 		)
-		req, resp := initHttp(
-			url,
-			method,
-			map[string]string{"deploy_record_id": deployRecordId},
-			map[string]string{"Authorization": "Bearer " + curToken})
-		for {
-			start++
-			if err := fasthttp.Do(req, resp); err != nil {
-				log.Println("请求失败:", err.Error())
-				return
-			}
-			b := resp.Body()
-			ooo := &ddd{}
-			_ = json.Unmarshal(b, ooo)
-			log.Println("deploy record id: ", deployRecordId)
-			log.Println("result: ", string(b))
-			log.Println("Pending")
-			if ooo.Data.Code == 1 || start > retry {
-				// 用完需要释放资源
-				fasthttp.ReleaseResponse(resp)
-				fasthttp.ReleaseRequest(req)
-				break
-			}
-			time.Sleep(waitSecond)
-		}
+		exec(deployRecordId, curToken, url, method, start, retry, waitSecond)
 	}
 }
 
@@ -257,4 +233,32 @@ type ddd struct {
 
 type data struct {
 	Code int
+}
+
+func exec(deployRecordId, curToken, url, method string, start, retry int, waitSecond time.Duration) {
+	req, resp := initHttp(
+		url,
+		method,
+		map[string]string{"deploy_record_id": deployRecordId},
+		map[string]string{"Authorization": "Bearer " + curToken})
+	for {
+		time.Sleep(waitSecond)
+		start++
+		if err := fasthttp.Do(req, resp); err != nil {
+			log.Println("请求失败:", err.Error())
+			return
+		}
+		b := resp.Body()
+		ooo := &ddd{}
+		_ = json.Unmarshal(b, ooo)
+		log.Println("deploy record id: ", deployRecordId)
+		log.Println("result: ", string(b))
+		log.Println("Pending")
+		if ooo.Data.Code == 1 || start > retry {
+			// 用完需要释放资源
+			fasthttp.ReleaseResponse(resp)
+			fasthttp.ReleaseRequest(req)
+			break
+		}
+	}
 }

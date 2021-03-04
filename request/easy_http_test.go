@@ -14,10 +14,10 @@ func TestHandleExec(t *testing.T) {
 func TestOpData(t *testing.T) {
 	var tn int
 	for {
-		BatchExecOpTask(1*time.Second, 10)
+		BatchExecOpTask(2*time.Second, 3)
 		tn += 1
 		log.Println("执行次数: ", tn)
-		time.Sleep(100 * time.Second)
+		time.Sleep(30 * time.Second)
 	}
 }
 
