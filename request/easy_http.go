@@ -3,12 +3,13 @@ package request
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
-	"github.com/valyala/fasthttp"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/spf13/viper"
+	"github.com/valyala/fasthttp"
 )
 
 func init() {
@@ -18,7 +19,7 @@ func init() {
 	}
 }
 
-func HandleExec() {
+func HandleExec(url string) {
 	deployRecordId := viper.Get("deployRecordId").(string)
 	appkey := viper.Get("appkey").(string)
 	channel := viper.Get("channel").(string)
@@ -29,7 +30,6 @@ func HandleExec() {
 	fromAppid := viper.Get("fromAppid").(string)
 	appid := viper.Get("appid").(string)
 	ucenterAlias := viper.Get("ucenterAlias").(string)
-	url := viper.Get("url").(string)
 	method := viper.Get("method").(string)
 	curToken, err := createToken(
 		[]byte(""),

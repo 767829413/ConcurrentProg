@@ -1,24 +1,21 @@
 package request
 
 import (
-	"github.com/spf13/viper"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 func TestHandleExec(t *testing.T) {
-	HandleExec()
+	url := viper.Get("url").(string)
+	HandleExec(url)
 }
 
 func TestOpData(t *testing.T) {
-	var tn int
-	for {
-		BatchExecOpTask(2*time.Second, 3)
-		tn += 1
-		log.Println("执行次数: ", tn)
-		time.Sleep(30 * time.Second)
-	}
+	BatchExecOpTask(1*time.Second, 2)
+	log.Println("end")
 }
 
 func TestGetToken(t *testing.T) {
@@ -54,4 +51,10 @@ func TestGetToken(t *testing.T) {
 		},
 	)
 	t.Log(curToken)
+}
+
+func TestPrint(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		log.Println(i)
+	}
 }
