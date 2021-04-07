@@ -77,7 +77,7 @@ func HandleExec(url string) {
 			_ = json.Unmarshal(b, ooo)
 			log.Println("result: ", string(b))
 			log.Println("Pending")
-			if ooo.Data.Code == 1 {
+			if ooo.State != 1 || ooo.Data.Code == 1 {
 				break
 			}
 			time.Sleep(1 * time.Second)

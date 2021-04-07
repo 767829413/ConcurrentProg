@@ -9,7 +9,7 @@ import (
 )
 
 func TestHandleExec(t *testing.T) {
-	url := viper.Get("url").(string)
+	url := viper.Get("del_url").(string)
 	HandleExec(url)
 }
 
