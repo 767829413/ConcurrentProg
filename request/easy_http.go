@@ -86,9 +86,7 @@ func HandleExec(url string) {
 	}
 }
 
-func BatchExecOpTask(waitSecond time.Duration, retry int) {
-	url := viper.Get("url").(string)
-	taskUrl := viper.Get("task_url").(string)
+func BatchExecOpTask(url, taskUrl string, waitSecond time.Duration, retry int) {
 	method := viper.Get("method").(string)
 	issuer := viper.Get("issuer").(string)
 	orgKey := viper.Get("orgKey").(string)

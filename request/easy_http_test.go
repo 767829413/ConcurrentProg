@@ -9,12 +9,18 @@ import (
 )
 
 func TestHandleExec(t *testing.T) {
-	url := viper.Get("del_url").(string)
+	//host := viper.Get("host").(string)
+	host := viper.Get("bak_host").(string)
+	url := host + viper.Get("url").(string)
 	HandleExec(url)
 }
 
 func TestOpData(t *testing.T) {
-	BatchExecOpTask(1*time.Second, 2)
+	host := viper.Get("host").(string)
+	//host := viper.Get("bak_host").(string)
+	url := host + viper.Get("url").(string)
+	taskUrl := host + viper.Get("task_url").(string)
+	BatchExecOpTask(url, taskUrl, 1*time.Second, 4)
 	log.Println("end")
 }
 
