@@ -12,25 +12,64 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type config struct {
+	deployRecordId string `json:"deploy_record_id"`
+	appkey         string `json:"appkey"`
+	channel        string `json:"channel"`
+	accountId      string `json:"account_id"`
+	issuer         string `json:"issuer"`
+	orgKey         string `json:"org_key"`
+	subOrgKey      string `json:"sub_org_key"`
+	fromAppid      string `json:"from_appid"`
+	appid          string `json:"appid"`
+	ucenterAlias   string `json:"ucenter_alias"`
+	host           string `json:"host"`
+	bakHost        string `json:"bak_host"`
+	url            string `json:"url"`
+	taskUrl        string `json:"task_url"`
+	delUrl         string `json:"del_url"`
+	method         string `json:"method"`
+}
+
+var defaultConfig config
+
 func init() {
 	err := initConfig()
+	defaultConfig = config{
+		deployRecordId: viper.Get("deployRecordId").(string),
+		appkey:         viper.Get("appkey").(string),
+		channel:        viper.Get("channel").(string),
+		accountId:      viper.Get("accountId").(string),
+		issuer:         viper.Get("issuer").(string),
+		orgKey:         viper.Get("orgKey").(string),
+		subOrgKey:      viper.Get("subOrgKey").(string),
+		fromAppid:      viper.Get("fromAppid").(string),
+		appid:          viper.Get("appid").(string),
+		ucenterAlias:   viper.Get("ucenterAlias").(string),
+		host:           viper.Get("host").(string),
+		bakHost:        viper.Get("bak_host").(string),
+		url:            viper.Get("url").(string),
+		taskUrl:        viper.Get("task_url").(string),
+		delUrl:         viper.Get("del_url").(string),
+		method:         viper.Get("method").(string),
+	}
 	if err != nil {
 		panic(err)
 	}
 }
 
 func HandleExec(url string) {
-	deployRecordId := viper.Get("deployRecordId").(string)
-	appkey := viper.Get("appkey").(string)
-	channel := viper.Get("channel").(string)
-	accountId := viper.Get("accountId").(string)
-	issuer := viper.Get("issuer").(string)
-	orgKey := viper.Get("orgKey").(string)
-	subOrgKey := viper.Get("subOrgKey").(string)
-	fromAppid := viper.Get("fromAppid").(string)
-	appid := viper.Get("appid").(string)
-	ucenterAlias := viper.Get("ucenterAlias").(string)
-	method := viper.Get("method").(string)
+	deployRecordId := defaultConfig.accountId
+	appkey := defaultConfig.appkey
+	channel := defaultConfig.channel
+	accountId := defaultConfig.accountId
+	issuer := defaultConfig.issuer
+	orgKey := defaultConfig.orgKey
+	subOrgKey := defaultConfig.subOrgKey
+	fromAppid := defaultConfig.fromAppid
+	appid := defaultConfig.appid
+	ucenterAlias := defaultConfig.ucenterAlias
+	method := defaultConfig.method
 	curToken, err := createToken(
 		[]byte(""),
 		issuer,
@@ -87,13 +126,13 @@ func HandleExec(url string) {
 }
 
 func BatchExecOpTask(url, taskUrl string, waitSecond time.Duration, retry int) {
-	method := viper.Get("method").(string)
-	issuer := viper.Get("issuer").(string)
-	orgKey := viper.Get("orgKey").(string)
-	subOrgKey := viper.Get("subOrgKey").(string)
-	fromAppid := viper.Get("fromAppid").(string)
-	appid := viper.Get("appid").(string)
-	ucenterAlias := viper.Get("ucenterAlias").(string)
+	method := defaultConfig.method
+	issuer := defaultConfig.issuer
+	orgKey := defaultConfig.orgKey
+	subOrgKey := defaultConfig.subOrgKey
+	fromAppid := defaultConfig.fromAppid
+	appid := defaultConfig.appid
+	ucenterAlias := defaultConfig.ucenterAlias
 	records := getOpData(taskUrl, method)
 	for _, v := range records {
 		start := 0
