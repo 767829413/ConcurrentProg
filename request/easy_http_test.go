@@ -16,12 +16,16 @@ func TestHandleExec(t *testing.T) {
 }
 
 func TestOpData(t *testing.T) {
-	host := viper.Get("host").(string)
-	//host := viper.Get("bak_host").(string)
-	url := host + viper.Get("url").(string)
-	taskUrl := host + viper.Get("task_url").(string)
-	BatchExecOpTask(url, taskUrl, 1*time.Second, 2)
-	log.Println("end")
+	for {
+		host := viper.Get("host").(string)
+		//host := viper.Get("bak_host").(string)
+		url := host + viper.Get("url").(string)
+		taskUrl := host + viper.Get("task_url").(string)
+		BatchExecOpTask(url, taskUrl, 1*time.Second, 1)
+		log.Println("end")
+		time.Sleep(3600 * time.Second)
+	}
+
 }
 
 func TestGetToken(t *testing.T) {
