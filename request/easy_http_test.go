@@ -21,7 +21,7 @@ func TestOpData(t *testing.T) {
 		//host := defaultConfig.bakHost
 		url := host + defaultConfig.url
 		taskUrl := host + defaultConfig.taskUrl
-		BatchExecOpTask(url, taskUrl, 1*time.Second, 1)
+		BatchExecOpTask(url, taskUrl, 1*time.Second, 0)
 		log.Println("end")
 		time.Sleep(3600 * time.Second)
 	}
