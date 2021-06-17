@@ -1,6 +1,7 @@
 package request
 
 import (
+	"ConcurrentProg/util"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -34,7 +35,7 @@ type config struct {
 var defaultConfig config
 
 func init() {
-	err := initConfig()
+	err := util.InitConfig("test", "json", "B:/study/ConcurrentProg/request")
 	defaultConfig = config{
 		deployRecordId: viper.Get("deployRecordId").(string),
 		appkey:         viper.Get("appkey").(string),
@@ -176,13 +177,6 @@ func initHttp(url, method string, postArgs, header map[string]string) (*fasthttp
 		req.PostArgs().Add(k, v)
 	}
 	return req, resp
-}
-
-func initConfig() error {
-	viper.SetConfigName("test")
-	viper.SetConfigType("json")
-	viper.AddConfigPath("B:/study/ConcurrentProg/request")
-	return viper.ReadInConfig()
 }
 
 func createToken(
