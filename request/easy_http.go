@@ -1,6 +1,7 @@
 package request
 
 import (
+	"ConcurrentProg/sshmysql"
 	"ConcurrentProg/util"
 	"encoding/json"
 	"fmt"
@@ -97,7 +98,7 @@ func HandleExec(url string) {
 	if err != nil {
 		log.Println(err)
 	} else {
-		req, resp := initHttp(
+		req, resp := initHttpRequest(
 			url,
 			method,
 			map[string]string{"deploy_record_id": deployRecordId},
@@ -126,7 +127,7 @@ func HandleExec(url string) {
 	}
 }
 
-func BatchExecOpTask(url, taskUrl string, waitSecond time.Duration, retry int) {
+func BatchExecOpTask(url string, waitSecond time.Duration, retry int) {
 	method := defaultConfig.method
 	issuer := defaultConfig.issuer
 	orgKey := defaultConfig.orgKey
@@ -134,38 +135,43 @@ func BatchExecOpTask(url, taskUrl string, waitSecond time.Duration, retry int) {
 	fromAppid := defaultConfig.fromAppid
 	appid := defaultConfig.appid
 	ucenterAlias := defaultConfig.ucenterAlias
-	records := getOpData(taskUrl, method)
-	for _, v := range records {
-		start := 0
-		channel := strconv.Itoa(v.Channel)
-		deployRecordId := strconv.Itoa(v.DeployRecordId)
-		curToken, _ := createToken(
-			[]byte(""),
-			issuer,
-			v.Appkey,
-			channel,
-			v.SpaceDeployId,
-			orgKey,
-			subOrgKey,
-			fromAppid,
-			appid,
-			ucenterAlias,
-			"",
-			[]map[string]string{
-				{
-					"appid":   appid,
-					"appkey":  v.Appkey,
-					"channel": channel,
-					"alias":   "default",
-					"version": "0.0.0",
+	records, err := sshmysql.GetDeployOpRecordList()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		for _, v := range records {
+			start := 0
+			channel := strconv.Itoa(v.Channel)
+			deployRecordId := strconv.Itoa(v.DeployRecordId)
+			curToken, _ := createToken(
+				[]byte(""),
+				issuer,
+				v.Appkey,
+				channel,
+				v.SpaceDeployId,
+				orgKey,
+				subOrgKey,
+				fromAppid,
+				appid,
+				ucenterAlias,
+				"",
+				[]map[string]string{
+					{
+						"appid":   appid,
+						"appkey":  v.Appkey,
+						"channel": channel,
+						"alias":   "default",
+						"version": "0.0.0",
+					},
 				},
-			},
-		)
-		exec(deployRecordId, curToken, url, method, start, retry, waitSecond)
+			)
+			exec(deployRecordId, curToken, url, method, start, retry, waitSecond)
+		}
 	}
+
 }
 
-func initHttp(url, method string, postArgs, header map[string]string) (*fasthttp.Request, *fasthttp.Response) {
+func initHttpRequest(url, method string, postArgs, header map[string]string) (*fasthttp.Request, *fasthttp.Response) {
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
 	req.Header.SetMethod(method)
@@ -211,9 +217,9 @@ func createToken(
 	return
 }
 
-func getOpData(url, method string) PendingList {
-	var ooo PendingList
-	req, resp := initHttp(
+func getOpData(url, method string) sshmysql.PendingList {
+	var ooo sshmysql.PendingList
+	req, resp := initHttpRequest(
 		url,
 		method,
 		map[string]string{},
@@ -231,15 +237,6 @@ func getOpData(url, method string) PendingList {
 	b := resp.Body()
 	_ = json.Unmarshal(b, &ooo)
 	return ooo
-}
-
-type PendingList []TaskRecord
-
-type TaskRecord struct {
-	Appkey         string `json:"appkey"`
-	Channel        int    `json:"channel"`
-	DeployRecordId int    `json:"deploy_record_id"`
-	SpaceDeployId  string `json:"space_deploy_id"`
 }
 
 type jwtCustomClaims struct {
@@ -267,7 +264,7 @@ type data struct {
 }
 
 func exec(deployRecordId, curToken, url, method string, start, retry int, waitSecond time.Duration) {
-	req, resp := initHttp(
+	req, resp := initHttpRequest(
 		url,
 		method,
 		map[string]string{"deploy_record_id": deployRecordId},
@@ -292,4 +289,11 @@ func exec(deployRecordId, curToken, url, method string, start, retry int, waitSe
 			break
 		}
 	}
+}
+
+func send(data, header map[string]string, url, method string) (r []byte, err error) {
+	req, resp := initHttpRequest(url, method, data, header)
+	err = fasthttp.Do(req, resp)
+	r = resp.Body()
+	return r, err
 }
