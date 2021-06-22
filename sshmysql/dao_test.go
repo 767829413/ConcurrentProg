@@ -12,7 +12,7 @@ func TestGetDeployRecordListBySpaceIds(t *testing.T) {
 		fmt.Println(err)
 	}
 	for _, v := range re {
-		fmt.Println(v.SpaceDeployId)
+		fmt.Println(v)
 	}
 }
 
