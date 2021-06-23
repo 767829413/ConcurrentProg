@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"time"
 )
 
 var sshcon *ssh.Client
@@ -42,6 +43,7 @@ func init() {
 			sshAuthMethod,
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Timeout:         24 * 3600 * time.Second,
 	}
 	dbSourceStr = fmt.Sprintf("%s:%s@mysql+tcp(%s)/%s", dbUser, dbPass, dbHost, dbName)
 	sshSourceStr = fmt.Sprintf("%s:%s", sshHost, sshPort)
