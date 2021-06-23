@@ -18,7 +18,7 @@ var sshcon *ssh.Client
 var sshConfig *ssh.ClientConfig
 var dbSourceStr string
 var sshSourceStr string
-var db *sql.DB
+var Db *sql.DB
 
 func init() {
 	err := util.InitConfig("config", "json", "B:/study/ConcurrentProg/sshmysql")
@@ -53,7 +53,7 @@ func init() {
 		log.Println("ssh服务连接失败")
 		panic(err)
 	}
-	db, err = connect()
+	Db, err = connect()
 	if err != nil {
 		log.Println("获取数据库失败")
 		panic(err)

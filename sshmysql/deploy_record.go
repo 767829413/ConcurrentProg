@@ -15,9 +15,8 @@ type DeployRecord struct {
 type Records []*DeployRecord
 
 func GetDeployRecordListBySpaceIds(spaceIds []string) (records Records, err error) {
-	defer db.Close()
 	str := "'" + strings.Join(spaceIds, "','") + "'"
-	rows, err := db.Query("SELECT `appkey`,`channel`,`appid`,`version`,`runtime`,`space_id`,`space_deploy_id` FROM `deploy_record` WHERE `space_id` IN (" + str + ")")
+	rows, err := Db.Query("SELECT `appkey`,`channel`,`appid`,`version`,`runtime`,`space_id`,`space_deploy_id` FROM `deploy_record` WHERE `space_id` IN (" + str + ")")
 	if err != nil {
 		return
 	}

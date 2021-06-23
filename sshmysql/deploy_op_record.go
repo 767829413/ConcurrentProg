@@ -10,8 +10,7 @@ type TaskRecord struct {
 }
 
 func GetDeployOpRecordList() (records PendingList, err error) {
-	defer db.Close()
-	rows, err := db.Query("SELECT `appkey`,`channel`,`deploy_record_id`,`space_deploy_id` FROM `deploy_op_record` WHERE `is_delete` = 0 AND `state` = 0")
+	rows, err := Db.Query("SELECT `appkey`,`channel`,`deploy_record_id`,`space_deploy_id` FROM `deploy_op_record` WHERE `is_delete` = 0 AND `state` = 0")
 	if err != nil {
 		return
 	}
