@@ -15,22 +15,22 @@ import (
 )
 
 type config struct {
-	deployRecordId string `json:"deploy_record_id"`
-	appkey         string `json:"appkey"`
-	channel        string `json:"channel"`
-	accountId      string `json:"account_id"`
-	issuer         string `json:"issuer"`
-	orgKey         string `json:"org_key"`
-	subOrgKey      string `json:"sub_org_key"`
-	fromAppid      string `json:"from_appid"`
-	appid          string `json:"appid"`
-	ucenterAlias   string `json:"ucenter_alias"`
-	host           string `json:"host"`
-	bakHost        string `json:"bak_host"`
-	url            string `json:"url"`
-	taskUrl        string `json:"task_url"`
-	delUrl         string `json:"del_url"`
-	method         string `json:"method"`
+	DeployRecordId string `json:"deploy_record_id"`
+	Appkey         string `json:"appkey"`
+	Channel        string `json:"channel"`
+	AccountId      string `json:"account_id"`
+	Issuer         string `json:"issuer"`
+	OrgKey         string `json:"org_key"`
+	SubOrgKey      string `json:"sub_org_key"`
+	FromAppid      string `json:"from_appid"`
+	Appid          string `json:"appid"`
+	UcenterAlias   string `json:"ucenter_alias"`
+	Host           string `json:"host"`
+	BakHost        string `json:"bak_host"`
+	Url            string `json:"url"`
+	TaskUrl        string `json:"task_url"`
+	DelUrl         string `json:"del_url"`
+	Method         string `json:"method"`
 }
 
 var defaultConfig config
@@ -38,22 +38,22 @@ var defaultConfig config
 func init() {
 	err := util.InitConfig("test", "json", "B:/study/ConcurrentProg/request")
 	defaultConfig = config{
-		deployRecordId: viper.Get("deployRecordId").(string),
-		appkey:         viper.Get("appkey").(string),
-		channel:        viper.Get("channel").(string),
-		accountId:      viper.Get("accountId").(string),
-		issuer:         viper.Get("issuer").(string),
-		orgKey:         viper.Get("orgKey").(string),
-		subOrgKey:      viper.Get("subOrgKey").(string),
-		fromAppid:      viper.Get("fromAppid").(string),
-		appid:          viper.Get("appid").(string),
-		ucenterAlias:   viper.Get("ucenterAlias").(string),
-		host:           viper.Get("host").(string),
-		bakHost:        viper.Get("bak_host").(string),
-		url:            viper.Get("url").(string),
-		taskUrl:        viper.Get("task_url").(string),
-		delUrl:         viper.Get("del_url").(string),
-		method:         viper.Get("method").(string),
+		DeployRecordId: viper.Get("deployRecordId").(string),
+		Appkey:         viper.Get("appkey").(string),
+		Channel:        viper.Get("channel").(string),
+		AccountId:      viper.Get("accountId").(string),
+		Issuer:         viper.Get("issuer").(string),
+		OrgKey:         viper.Get("orgKey").(string),
+		SubOrgKey:      viper.Get("subOrgKey").(string),
+		FromAppid:      viper.Get("fromAppid").(string),
+		Appid:          viper.Get("appid").(string),
+		UcenterAlias:   viper.Get("ucenterAlias").(string),
+		Host:           viper.Get("host").(string),
+		BakHost:        viper.Get("bak_host").(string),
+		Url:            viper.Get("url").(string),
+		TaskUrl:        viper.Get("task_url").(string),
+		DelUrl:         viper.Get("del_url").(string),
+		Method:         viper.Get("method").(string),
 	}
 	if err != nil {
 		panic(err)
@@ -61,17 +61,17 @@ func init() {
 }
 
 func HandleExec(url string) {
-	deployRecordId := defaultConfig.deployRecordId
-	appkey := defaultConfig.appkey
-	channel := defaultConfig.channel
-	accountId := defaultConfig.accountId
-	issuer := defaultConfig.issuer
-	orgKey := defaultConfig.orgKey
-	subOrgKey := defaultConfig.subOrgKey
-	fromAppid := defaultConfig.fromAppid
-	appid := defaultConfig.appid
-	ucenterAlias := defaultConfig.ucenterAlias
-	method := defaultConfig.method
+	deployRecordId := defaultConfig.DeployRecordId
+	appkey := defaultConfig.Appkey
+	channel := defaultConfig.Channel
+	accountId := defaultConfig.AccountId
+	issuer := defaultConfig.Issuer
+	orgKey := defaultConfig.OrgKey
+	subOrgKey := defaultConfig.SubOrgKey
+	fromAppid := defaultConfig.FromAppid
+	appid := defaultConfig.Appid
+	ucenterAlias := defaultConfig.UcenterAlias
+	method := defaultConfig.Method
 	curToken, err := createToken(
 		[]byte(""),
 		issuer,
@@ -128,13 +128,13 @@ func HandleExec(url string) {
 }
 
 func BatchExecOpTask(url string, waitSecond time.Duration, retry int) {
-	method := defaultConfig.method
-	issuer := defaultConfig.issuer
-	orgKey := defaultConfig.orgKey
-	subOrgKey := defaultConfig.subOrgKey
-	fromAppid := defaultConfig.fromAppid
-	appid := defaultConfig.appid
-	ucenterAlias := defaultConfig.ucenterAlias
+	method := defaultConfig.Method
+	issuer := defaultConfig.Issuer
+	orgKey := defaultConfig.OrgKey
+	subOrgKey := defaultConfig.SubOrgKey
+	fromAppid := defaultConfig.FromAppid
+	appid := defaultConfig.Appid
+	ucenterAlias := defaultConfig.UcenterAlias
 	records, err := sshmysql.GetDeployOpRecordList()
 	if err != nil {
 		fmt.Println(err)
