@@ -61,7 +61,7 @@ func init() {
 }
 
 func HandleExec(url string) {
-	deployRecordId := defaultConfig.accountId
+	deployRecordId := defaultConfig.deployRecordId
 	appkey := defaultConfig.appkey
 	channel := defaultConfig.channel
 	accountId := defaultConfig.accountId
