@@ -11,18 +11,18 @@ import (
 )
 
 func TestHandleExec(t *testing.T) {
-	host := defaultConfig.host
+	host := defaultConfig.Host
 	//host := defaultConfig.bakHost
 	//url := host + defaultConfig.url
-	url := host + defaultConfig.delUrl
+	url := host + defaultConfig.DelUrl
 	HandleExec(url)
 }
 
 func TestOpData(t *testing.T) {
 	for {
-		host := defaultConfig.host
+		host := defaultConfig.Host
 		//host := defaultConfig.bakHost
-		url := host + defaultConfig.url
+		url := host + defaultConfig.Url
 		BatchExecOpTask(url, 1*time.Second, 0)
 		log.Println("end")
 		time.Sleep(720 * time.Second)
@@ -78,12 +78,12 @@ func TestSyncOp(t *testing.T) {
 		"6f2a964514054f0d9f223950f02cfd14",
 		"7d815fade7ce4037bd4a577a5e708bdd",
 		"509f369d0e0d4cb69eeb38b264505fcf"}
-	issuer := defaultConfig.issuer
-	orgKey := defaultConfig.orgKey
-	subOrgKey := defaultConfig.subOrgKey
-	fromAppid := defaultConfig.fromAppid
-	appid := defaultConfig.appid
-	ucenterAlias := defaultConfig.ucenterAlias
+	issuer := defaultConfig.Issuer
+	orgKey := defaultConfig.OrgKey
+	subOrgKey := defaultConfig.SubOrgKey
+	fromAppid := defaultConfig.FromAppid
+	appid := defaultConfig.Appid
+	ucenterAlias := defaultConfig.UcenterAlias
 	var records sshmysql.Records
 	records, err := sshmysql.GetDeployRecordListBySpaceIds(spaceIds)
 	if err != nil {
