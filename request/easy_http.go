@@ -60,11 +60,7 @@ func init() {
 	}
 }
 
-func HandleExec(url string) {
-	deployRecordId := defaultConfig.DeployRecordId
-	appkey := defaultConfig.Appkey
-	channel := defaultConfig.Channel
-	accountId := defaultConfig.AccountId
+func HandleExec(deployRecordId, appkey, channel, accountId, url string) {
 	issuer := defaultConfig.Issuer
 	orgKey := defaultConfig.OrgKey
 	subOrgKey := defaultConfig.SubOrgKey
@@ -98,22 +94,16 @@ func HandleExec(url string) {
 	if err != nil {
 		log.Println(err)
 	} else {
-		req, resp := initHttpRequest(
-			url,
-			method,
-			map[string]string{"deploy_record_id": deployRecordId},
-			map[string]string{"Authorization": "Bearer " + curToken})
-		defer func() {
-			// 用完需要释放资源
-			fasthttp.ReleaseResponse(resp)
-			fasthttp.ReleaseRequest(req)
-		}()
 		for {
-			if err := fasthttp.Do(req, resp); err != nil {
+			b, err := send(
+				map[string]string{"deploy_record_id": deployRecordId},
+				map[string]string{"Authorization": "Bearer " + curToken},
+				url,
+				method)
+			if err != nil {
 				log.Println("请求失败:", err.Error())
 				return
 			}
-			b := resp.Body()
 			ooo := &ddd{}
 			_ = json.Unmarshal(b, ooo)
 			log.Println("result: ", string(b))
@@ -123,7 +113,7 @@ func HandleExec(url string) {
 			}
 			time.Sleep(1 * time.Second)
 		}
-		log.Println("OK")
+		log.Println("end")
 	}
 }
 
@@ -264,35 +254,33 @@ type data struct {
 }
 
 func exec(deployRecordId, curToken, url, method string, start, retry int, waitSecond time.Duration) {
-	req, resp := initHttpRequest(
-		url,
-		method,
-		map[string]string{"deploy_record_id": deployRecordId},
-		map[string]string{"Authorization": "Bearer " + curToken})
 	for {
-		time.Sleep(waitSecond)
 		start++
-		if err := fasthttp.Do(req, resp); err != nil {
+		b, err := send(map[string]string{"deploy_record_id": deployRecordId},
+			map[string]string{"Authorization": "Bearer " + curToken},
+			url, method)
+		if err != nil {
 			log.Println("请求失败:", err.Error())
 			return
 		}
-		b := resp.Body()
 		ooo := &ddd{}
 		_ = json.Unmarshal(b, ooo)
 		log.Println("deploy record id: ", deployRecordId)
 		log.Println("result: ", string(b))
 		log.Println("Pending")
 		if ooo.Data.Code == 1 || start > retry {
-			// 用完需要释放资源
-			fasthttp.ReleaseResponse(resp)
-			fasthttp.ReleaseRequest(req)
 			break
 		}
+		time.Sleep(waitSecond)
 	}
 }
 
 func send(data, header map[string]string, url, method string) (r []byte, err error) {
 	req, resp := initHttpRequest(url, method, data, header)
+	defer func() {
+		fasthttp.ReleaseResponse(resp)
+		fasthttp.ReleaseRequest(req)
+	}()
 	err = fasthttp.Do(req, resp)
 	r = resp.Body()
 	return r, err

@@ -11,11 +11,10 @@ import (
 )
 
 func TestHandleExec(t *testing.T) {
-	host := defaultConfig.Host
 	//host := defaultConfig.bakHost
 	//url := host + defaultConfig.url
-	url := host + defaultConfig.DelUrl
-	HandleExec(url)
+	url := defaultConfig.Host + defaultConfig.DelUrl
+	HandleExec(defaultConfig.DeployRecordId, defaultConfig.Appkey, defaultConfig.Channel, defaultConfig.AccountId, url)
 }
 
 func TestOpData(t *testing.T) {
@@ -25,7 +24,7 @@ func TestOpData(t *testing.T) {
 		url := host + defaultConfig.Url
 		BatchExecOpTask(url, 1*time.Second, 0)
 		log.Println("end")
-		time.Sleep(720 * time.Second)
+		time.Sleep(3600 * time.Second)
 	}
 
 }
@@ -73,11 +72,8 @@ func TestPrint(t *testing.T) {
 
 func TestSyncOp(t *testing.T) {
 	spaceIds := []string{
-		"bf4d63cbcdca441c8f0498a71c1effa9",
-		"adaca618a99a41f0bff173f84fdc812f",
-		"6f2a964514054f0d9f223950f02cfd14",
-		"7d815fade7ce4037bd4a577a5e708bdd",
-		"509f369d0e0d4cb69eeb38b264505fcf"}
+		"0ddeaa42c04d4a9184afa61861917d7b", "04070c8138e541a798b9b794175772b1", "55012dba5c104f3dae0f19bcd89effbd",
+	}
 	issuer := defaultConfig.Issuer
 	orgKey := defaultConfig.OrgKey
 	subOrgKey := defaultConfig.SubOrgKey
@@ -91,6 +87,7 @@ func TestSyncOp(t *testing.T) {
 	} else {
 		for _, v := range records {
 			channel := strconv.Itoa(v.Channel)
+			id := strconv.Itoa(v.Id)
 			//构建token
 			curToken, _ := createToken(
 				[]byte(""),
@@ -115,10 +112,15 @@ func TestSyncOp(t *testing.T) {
 				},
 			)
 			r, err := send(
-				map[string]string{"appid": v.Appid, "version": v.Version, "runtime": v.Runtime, "wer": "100"},
+				map[string]string{"deploy_record_id": id},
 				map[string]string{"Authorization": "Bearer " + curToken},
-				"http://dp-a36vf7jujm9x7.gw002.oneitfarm.com/topology/topo/sync",
+				defaultConfig.Host+defaultConfig.DelUrl,
 				"POST")
+			//r, err := send(
+			//	map[string]string{"appid": v.Appid, "version": v.Version, "runtime": v.Runtime, "wer": "100"},
+			//	map[string]string{"Authorization": "Bearer " + curToken},
+			//	"http://dp-a36vf7jujm9x7.gw002.oneitfarm.com/topology/topo/sync",
+			//	"POST")
 			if err != nil {
 				t.Log(err)
 			} else {
