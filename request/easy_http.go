@@ -267,7 +267,6 @@ func exec(deployRecordId, curToken, url, method string, start, retry int, waitSe
 		_ = json.Unmarshal(b, ooo)
 		log.Println("deploy record id: ", deployRecordId)
 		log.Println("result: ", string(b))
-		log.Println("Pending")
 		if ooo.Data.Code == 1 || start > retry {
 			break
 		}

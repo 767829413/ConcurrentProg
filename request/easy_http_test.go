@@ -11,8 +11,6 @@ import (
 )
 
 func TestHandleExec(t *testing.T) {
-	//host := defaultConfig.bakHost
-	//url := host + defaultConfig.url
 	url := defaultConfig.Host + defaultConfig.DelUrl
 	HandleExec(defaultConfig.DeployRecordId, defaultConfig.Appkey, defaultConfig.Channel, defaultConfig.AccountId, url)
 }
@@ -24,7 +22,7 @@ func TestOpData(t *testing.T) {
 		url := host + defaultConfig.Url
 		BatchExecOpTask(url, 1*time.Second, 0)
 		log.Println("end")
-		time.Sleep(3600 * time.Second)
+		time.Sleep(360 * time.Second)
 	}
 
 }
