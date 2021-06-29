@@ -60,31 +60,24 @@ func init() {
 	}
 }
 
-func HandleExec(deployRecordId, appkey, channel, accountId, url string) {
-	issuer := defaultConfig.Issuer
-	orgKey := defaultConfig.OrgKey
-	subOrgKey := defaultConfig.SubOrgKey
-	fromAppid := defaultConfig.FromAppid
-	appid := defaultConfig.Appid
-	ucenterAlias := defaultConfig.UcenterAlias
-	method := defaultConfig.Method
+func HandleExec(url string) {
 	curToken, err := createToken(
 		[]byte(""),
-		issuer,
-		appkey,
-		channel,
-		accountId,
-		orgKey,
-		subOrgKey,
-		fromAppid,
-		appid,
-		ucenterAlias,
+		defaultConfig.Issuer,
+		defaultConfig.Appkey,
+		defaultConfig.Channel,
+		defaultConfig.AccountId,
+		defaultConfig.OrgKey,
+		defaultConfig.SubOrgKey,
+		defaultConfig.FromAppid,
+		defaultConfig.Appid,
+		defaultConfig.UcenterAlias,
 		"",
 		[]map[string]string{
 			{
-				"appid":   appid,
-				"appkey":  appkey,
-				"channel": channel,
+				"appid":   defaultConfig.Appid,
+				"appkey":  defaultConfig.Appkey,
+				"channel": defaultConfig.Channel,
 				"alias":   "default",
 				"version": "0.0.0",
 			},
@@ -96,10 +89,10 @@ func HandleExec(deployRecordId, appkey, channel, accountId, url string) {
 	} else {
 		for {
 			b, err := send(
-				map[string]string{"deploy_record_id": deployRecordId},
+				map[string]string{"deploy_record_id": defaultConfig.DeployRecordId},
 				map[string]string{"Authorization": "Bearer " + curToken},
 				url,
-				method)
+				defaultConfig.Method)
 			if err != nil {
 				log.Println("请求失败:", err.Error())
 				return
@@ -118,13 +111,6 @@ func HandleExec(deployRecordId, appkey, channel, accountId, url string) {
 }
 
 func BatchExecOpTask(url string, waitSecond time.Duration, retry int) {
-	method := defaultConfig.Method
-	issuer := defaultConfig.Issuer
-	orgKey := defaultConfig.OrgKey
-	subOrgKey := defaultConfig.SubOrgKey
-	fromAppid := defaultConfig.FromAppid
-	appid := defaultConfig.Appid
-	ucenterAlias := defaultConfig.UcenterAlias
 	records, err := sshmysql.GetDeployOpRecordList()
 	if err != nil {
 		fmt.Println(err)
@@ -135,19 +121,19 @@ func BatchExecOpTask(url string, waitSecond time.Duration, retry int) {
 			deployRecordId := strconv.Itoa(v.DeployRecordId)
 			curToken, _ := createToken(
 				[]byte(""),
-				issuer,
+				defaultConfig.Issuer,
 				v.Appkey,
 				channel,
 				v.SpaceDeployId,
-				orgKey,
-				subOrgKey,
-				fromAppid,
-				appid,
-				ucenterAlias,
+				defaultConfig.OrgKey,
+				defaultConfig.SubOrgKey,
+				defaultConfig.FromAppid,
+				defaultConfig.Appid,
+				defaultConfig.UcenterAlias,
 				"",
 				[]map[string]string{
 					{
-						"appid":   appid,
+						"appid":   defaultConfig.Appid,
 						"appkey":  v.Appkey,
 						"channel": channel,
 						"alias":   "default",
@@ -155,7 +141,7 @@ func BatchExecOpTask(url string, waitSecond time.Duration, retry int) {
 					},
 				},
 			)
-			exec(deployRecordId, curToken, url, method, start, retry, waitSecond)
+			exec(deployRecordId, curToken, url, defaultConfig.Method, start, retry, waitSecond)
 		}
 	}
 
@@ -209,22 +195,11 @@ func createToken(
 
 func getOpData(url, method string) sshmysql.PendingList {
 	var ooo sshmysql.PendingList
-	req, resp := initHttpRequest(
-		url,
-		method,
-		map[string]string{},
-		map[string]string{})
-	defer func() {
-		// 用完需要释放资源
-		fasthttp.ReleaseResponse(resp)
-		fasthttp.ReleaseRequest(req)
-	}()
-	if err := fasthttp.Do(req, resp); err != nil {
+	b, err := send(map[string]string{}, map[string]string{}, url, method)
+	if err != nil {
 		fmt.Println("请求失败:", err.Error())
 		return ooo
 	}
-
-	b := resp.Body()
 	_ = json.Unmarshal(b, &ooo)
 	return ooo
 }

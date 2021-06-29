@@ -12,7 +12,7 @@ import (
 
 func TestHandleExec(t *testing.T) {
 	url := defaultConfig.Host + defaultConfig.DelUrl
-	HandleExec(defaultConfig.DeployRecordId, defaultConfig.Appkey, defaultConfig.Channel, defaultConfig.AccountId, url)
+	HandleExec(url)
 }
 
 func TestOpData(t *testing.T) {
