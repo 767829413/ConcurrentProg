@@ -70,14 +70,8 @@ func TestPrint(t *testing.T) {
 
 func TestSyncOp(t *testing.T) {
 	spaceIds := []string{
-		"0ddeaa42c04d4a9184afa61861917d7b", "04070c8138e541a798b9b794175772b1", "55012dba5c104f3dae0f19bcd89effbd",
+		"42de682977764489bf970e780a4f0fde",
 	}
-	issuer := defaultConfig.Issuer
-	orgKey := defaultConfig.OrgKey
-	subOrgKey := defaultConfig.SubOrgKey
-	fromAppid := defaultConfig.FromAppid
-	appid := defaultConfig.Appid
-	ucenterAlias := defaultConfig.UcenterAlias
 	var records sshmysql.Records
 	records, err := sshmysql.GetDeployRecordListBySpaceIds(spaceIds)
 	if err != nil {
@@ -89,19 +83,19 @@ func TestSyncOp(t *testing.T) {
 			//构建token
 			curToken, _ := createToken(
 				[]byte(""),
-				issuer,
+				defaultConfig.Issuer,
 				v.Appkey,
 				channel,
 				v.SpaceDeployId,
-				orgKey,
-				subOrgKey,
-				fromAppid,
-				appid,
-				ucenterAlias,
+				defaultConfig.OrgKey,
+				defaultConfig.SubOrgKey,
+				defaultConfig.FromAppid,
+				defaultConfig.Appid,
+				defaultConfig.UcenterAlias,
 				"",
 				[]map[string]string{
 					{
-						"appid":   appid,
+						"appid":   defaultConfig.Appid,
 						"appkey":  v.Appkey,
 						"channel": channel,
 						"alias":   "default",
