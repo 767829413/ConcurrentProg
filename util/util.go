@@ -1,6 +1,8 @@
 package util
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 func InitConfig(configName, configType, configPath string) error {
 	viper.SetConfigName(configName)

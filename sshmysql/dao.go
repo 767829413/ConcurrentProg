@@ -1,7 +1,6 @@
 package sshmysql
 
 import (
-	"ConcurrentProg/util"
 	"context"
 	"database/sql"
 	"fmt"
@@ -19,13 +18,9 @@ var sshConfig *ssh.ClientConfig
 var dbSourceStr string
 var sshSourceStr string
 var Db *sql.DB
+var err error
 
-func init() {
-	err := util.InitConfig("config", "json", "B:/study/ConcurrentProg/sshmysql")
-	if err != nil {
-		log.Println("获取ssh mysql配置文件失败")
-		panic(err)
-	}
+func Sshinit() {
 	sshHost := viper.Get("ssh_host").(string)               // SSH Server Hostname/IP
 	sshPort := viper.Get("ssh_port").(string)               // SSH Port
 	sshUser := viper.Get("ssh_user").(string)               // SSH Username
@@ -34,7 +29,18 @@ func init() {
 	dbPass := viper.Get("db_pass").(string)                 // DB Password
 	dbHost := viper.Get("db_host").(string)                 // DB Hostname/IP
 	dbName := viper.Get("db_name").(string)                 // DB database name
+	Db, err = GetDbHandler(sshHost, sshPort, sshUser, sshPubKeyPath, dbUser, dbPass, dbHost, dbName)
+	if err != nil {
+		log.Println("获取数据库失败")
+		panic(err)
+	}
+}
 
+func GetDbHandler(sshHost, sshPort, sshUser, sshPubKeyPath, dbUser, dbPass, dbHost, dbName string) (*sql.DB, error) {
+	if err != nil {
+		log.Println("获取ssh mysql配置文件失败")
+		panic(err)
+	}
 	sshAuthMethod := PublicKeyFile(sshPubKeyPath)
 	// The client configuration with configuration option to use the ssh-agent
 	sshConfig = &ssh.ClientConfig{
@@ -53,11 +59,7 @@ func init() {
 		log.Println("ssh服务连接失败")
 		panic(err)
 	}
-	Db, err = connect()
-	if err != nil {
-		log.Println("获取数据库失败")
-		panic(err)
-	}
+	return connect()
 }
 
 type sSHDialer struct {

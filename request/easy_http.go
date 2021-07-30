@@ -36,7 +36,8 @@ type config struct {
 var defaultConfig config
 
 func init() {
-	err := util.InitConfig("test", "json", "B:/study/ConcurrentProg/request")
+	err := util.InitConfig("config", "json", "B:/study/ConcurrentProg")
+	sshmysql.Sshinit()
 	defaultConfig = config{
 		DeployRecordId: viper.Get("deployRecordId").(string),
 		Appkey:         viper.Get("appkey").(string),
