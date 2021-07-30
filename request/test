@@ -1,0 +1,18 @@
+{
+"deployRecordId": "2785",
+"appkey": "topogli44vvvgbvkohoy2kutdyvpli5s",
+"channel": "321",
+"accountId": "c827a62cb31f497c82ce3bcedbcec08b",
+"issuer": "cfcd208495d565ef66e7dff9f98764da",
+"orgKey": "90f142599399456ba8d81cad850aaf4e",
+"subOrgKey": "90f142599399456ba8d81cad850aaf4e",
+"fromAppid": "bc96b94e8a8946b9ad9da266f91d84b1",
+"appid": "6ca21e28b21745e796a4a83eb89df709",
+"ucenterAlias": "default",
+"host": "http://dp-a36vf7jujm9x7.gw002.oneitfarm.com",
+"bak_host": "http://dp-f12nt3kzoovdi.gw002.oneitfarm.com",
+"url": "/deploy/pending/exec",
+"task_url": "/Test/getPendingTask",
+"del_url": "/destroy",
+"method": "POST"
+}

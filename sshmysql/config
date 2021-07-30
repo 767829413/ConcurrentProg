@@ -1,0 +1,10 @@
+{
+"ssh_host":"localhost",
+"ssh_port":"22222",
+"ssh_user":"root",
+"ssh_pub_key_path":"B:/study/ConcurrentProg/sshmysql/test_sql_link.ssh-rsa",
+"db_user":"dbhxlpe8xiug7f2d",
+"db_pass":"lei2pqlkjylhrdyqvjdiige6xulm9zmi",
+"db_host":"rm-uf6gz6k88ao353q8m.mysql.rds.aliyuncs.com:3306",
+"db_name":"dbhxlpe8xiug7f2d"
+}
