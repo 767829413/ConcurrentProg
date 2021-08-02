@@ -62,12 +62,6 @@ func TestGetToken(t *testing.T) {
 	t.Log(curToken)
 }
 
-func TestPrint(t *testing.T) {
-	for i := 0; i < 10; i++ {
-		log.Println(i)
-	}
-}
-
 func TestSyncOp(t *testing.T) {
 	spaceIds := []string{
 		"97e6ab6111524ddfb4be239493e992ca",
