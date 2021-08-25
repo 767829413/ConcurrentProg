@@ -16,13 +16,17 @@ func TestHandleExec(t *testing.T) {
 }
 
 func TestOpData(t *testing.T) {
+	SkipRecordIds := make(map[int]int)
 	for {
 		host := defaultConfig.Host
 		//host := defaultConfig.bakHost
 		url := host + defaultConfig.Url
-		BatchExecOpTask(url, 1*time.Second, 0)
+		//SkipRecordIds[3898] = true
+		BatchExecOpTask(url, 1*time.Second, 0, SkipRecordIds)
+		log.Println("未执行记录: ", SkipRecordIds)
 		log.Println("end")
-		time.Sleep(360 * time.Second)
+		log.Println("url: ", url)
+		time.Sleep(720 * time.Second)
 	}
 
 }
@@ -64,7 +68,7 @@ func TestGetToken(t *testing.T) {
 
 func TestSyncOp(t *testing.T) {
 	spaceIds := []string{
-		"97e6ab6111524ddfb4be239493e992ca",
+		"e03a937f9b1a46c89b19a989f8e05ea3",
 	}
 	var records sshmysql.Records
 	records, err := sshmysql.GetDeployRecordListBySpaceIds(spaceIds)
@@ -74,7 +78,6 @@ func TestSyncOp(t *testing.T) {
 		for {
 			for _, v := range records {
 				channel := strconv.Itoa(v.Channel)
-				id := strconv.Itoa(v.Id)
 				//构建token
 				curToken, _ := createToken(
 					[]byte(""),
@@ -98,13 +101,14 @@ func TestSyncOp(t *testing.T) {
 						},
 					},
 				)
+				id := strconv.Itoa(v.Id)
 				r, err := send(
 					map[string]string{"deploy_record_id": id, "firm_destroy": "1"},
 					map[string]string{"Authorization": "Bearer " + curToken},
 					defaultConfig.Host+defaultConfig.DelUrl,
 					"POST")
 				//r, err := send(
-				//	map[string]string{"appid": v.Appid, "version": v.Version, "runtime": v.Runtime, "wer": "100"},
+				//	map[string]string{"appid": v.Appid, "version": v.Version, "runtime": v.Runtime},
 				//	map[string]string{"Authorization": "Bearer " + curToken},
 				//	"http://dp-a36vf7jujm9x7.gw002.oneitfarm.com/topology/topo/sync",
 				//	"POST")

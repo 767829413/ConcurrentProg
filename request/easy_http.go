@@ -111,12 +111,17 @@ func HandleExec(url string) {
 	}
 }
 
-func BatchExecOpTask(url string, waitSecond time.Duration, retry int) {
+func BatchExecOpTask(url string, waitSecond time.Duration, retry int, SkipRecordIds map[int]int) {
 	records, err := sshmysql.GetDeployOpRecordList()
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		for _, v := range records {
+			if SkipRecordIds[v.DeployRecordId] > 10 {
+				continue
+			} else {
+				SkipRecordIds[v.DeployRecordId]++
+			}
 			start := 0
 			channel := strconv.Itoa(v.Channel)
 			deployRecordId := strconv.Itoa(v.DeployRecordId)
@@ -243,6 +248,7 @@ func exec(deployRecordId, curToken, url, method string, start, retry int, waitSe
 		_ = json.Unmarshal(b, ooo)
 		log.Println("deploy record id: ", deployRecordId)
 		log.Println("result: ", string(b))
+		log.Println("token: ", curToken)
 		if ooo.Data.Code == 1 || start > retry {
 			break
 		}

@@ -1,8 +1,13 @@
 # github.com/andybalholm/brotli v1.0.0
 github.com/andybalholm/brotli
+# github.com/common-nighthawk/go-figure v0.0.0-20200609044655-c4b36f998cf2
+github.com/common-nighthawk/go-figure
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 ## explicit
 github.com/dgrijalva/jwt-go
+# github.com/dimiro1/banner v1.1.0
+## explicit
+github.com/dimiro1/banner
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
 # github.com/go-sql-driver/mysql v1.6.0
@@ -25,6 +30,11 @@ github.com/klauspost/compress/gzip
 github.com/klauspost/compress/zlib
 # github.com/magiconair/properties v1.8.1
 github.com/magiconair/properties
+# github.com/mattn/go-colorable v0.1.4
+## explicit
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.10
+github.com/mattn/go-isatty
 # github.com/mitchellh/mapstructure v1.1.2
 github.com/mitchellh/mapstructure
 # github.com/pelletier/go-toml v1.2.0
@@ -66,7 +76,6 @@ golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/ssh
-golang.org/x/crypto/ssh/agent
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
 # golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
 golang.org/x/sys/cpu
