@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -37,7 +38,7 @@ var defaultConfig config
 
 func init() {
 	err := util.InitConfig("config", "json", "B:/study/ConcurrentProg")
-	sshmysql.Sshinit()
+	//sshmysql.Sshinit()
 	defaultConfig = config{
 		DeployRecordId: viper.Get("deployRecordId").(string),
 		Appkey:         viper.Get("appkey").(string),
@@ -112,43 +113,40 @@ func HandleExec(url string) {
 }
 
 func BatchExecOpTask(url string, waitSecond time.Duration, retry int, SkipRecordIds map[int]int) {
-	records, err := sshmysql.GetDeployOpRecordList()
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		for _, v := range records {
-			if SkipRecordIds[v.DeployRecordId] > 10 {
-				continue
-			} else {
-				SkipRecordIds[v.DeployRecordId]++
-			}
-			start := 0
-			channel := strconv.Itoa(v.Channel)
-			deployRecordId := strconv.Itoa(v.DeployRecordId)
-			curToken, _ := createToken(
-				[]byte(""),
-				defaultConfig.Issuer,
-				v.Appkey,
-				channel,
-				v.SpaceDeployId,
-				defaultConfig.OrgKey,
-				defaultConfig.SubOrgKey,
-				defaultConfig.FromAppid,
-				defaultConfig.Appid,
-				defaultConfig.UcenterAlias,
-				"",
-				[]map[string]string{
-					{
-						"appid":   defaultConfig.Appid,
-						"appkey":  v.Appkey,
-						"channel": channel,
-						"alias":   "default",
-						"version": "0.0.0",
-					},
-				},
-			)
-			exec(deployRecordId, curToken, url, defaultConfig.Method, start, retry, waitSecond)
+	//records, _ := sshmysql.GetDeployOpRecordList()
+	records := getOpData(defaultConfig.Host+defaultConfig.TaskUrl, "POST")
+	for _, v := range records {
+		if SkipRecordIds[v.DeployRecordId] > 10 {
+			continue
+		} else {
+			SkipRecordIds[v.DeployRecordId]++
 		}
+		start := 0
+		channel := strconv.Itoa(v.Channel)
+		deployRecordId := strconv.Itoa(v.DeployRecordId)
+		curToken, _ := createToken(
+			[]byte(""),
+			defaultConfig.Issuer,
+			v.Appkey,
+			channel,
+			v.SpaceDeployId,
+			defaultConfig.OrgKey,
+			defaultConfig.SubOrgKey,
+			defaultConfig.FromAppid,
+			defaultConfig.Appid,
+			defaultConfig.UcenterAlias,
+			"",
+			[]map[string]string{
+				{
+					"appid":   defaultConfig.Appid,
+					"appkey":  v.Appkey,
+					"channel": channel,
+					"alias":   "default",
+					"version": "0.0.0",
+				},
+			},
+		)
+		exec(deployRecordId, curToken, url, defaultConfig.Method, start, retry, waitSecond)
 	}
 
 }
@@ -210,6 +208,19 @@ func getOpData(url, method string) sshmysql.PendingList {
 	return ooo
 }
 
+func getRecordDataBySpaceIds(spaceIds []string, url, method string) sshmysql.Records {
+	str := "" + strings.Join(spaceIds, ",") + ""
+	var ooo sshmysql.Records
+	b, err := send(map[string]string{"space_ids": str}, map[string]string{}, url, method)
+	if err != nil {
+		fmt.Println("请求失败:", err.Error())
+		return ooo
+	}
+	resp := RecordListResp{}
+	_ = json.Unmarshal(b, &resp)
+	return resp.Data
+}
+
 type jwtCustomClaims struct {
 	jwt.StandardClaims
 	// 追加自己需要的信息
@@ -230,6 +241,11 @@ type ddd struct {
 	Data  data
 }
 
+type RecordListResp struct {
+	State int              `json:"state"`
+	Data  sshmysql.Records `json:"data"`
+}
+
 type data struct {
 	Code int
 }
@@ -248,7 +264,9 @@ func exec(deployRecordId, curToken, url, method string, start, retry int, waitSe
 		_ = json.Unmarshal(b, ooo)
 		log.Println("deploy record id: ", deployRecordId)
 		log.Println("result: ", string(b))
-		log.Println("token: ", curToken)
+		if ooo.State != 1 {
+			log.Println("token: ", curToken)
+		}
 		if ooo.Data.Code == 1 || start > retry {
 			break
 		}

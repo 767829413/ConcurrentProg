@@ -26,9 +26,8 @@ func TestOpData(t *testing.T) {
 		log.Println("未执行记录: ", SkipRecordIds)
 		log.Println("end")
 		log.Println("url: ", url)
-		time.Sleep(720 * time.Second)
+		time.Sleep(3600 * time.Second)
 	}
-
 }
 
 func TestGetToken(t *testing.T) {
@@ -68,59 +67,55 @@ func TestGetToken(t *testing.T) {
 
 func TestSyncOp(t *testing.T) {
 	spaceIds := []string{
-		"e03a937f9b1a46c89b19a989f8e05ea3",
+		//"76acde2258864636a6ce8519eda6da66",
+		"de3c1299c99c459e8907084b8377e90d",
 	}
 	var records sshmysql.Records
-	records, err := sshmysql.GetDeployRecordListBySpaceIds(spaceIds)
-	if err != nil {
-		t.Log(err)
-	} else {
-		for {
-			for _, v := range records {
-				channel := strconv.Itoa(v.Channel)
-				//构建token
-				curToken, _ := createToken(
-					[]byte(""),
-					defaultConfig.Issuer,
-					v.Appkey,
-					channel,
-					v.SpaceDeployId,
-					defaultConfig.OrgKey,
-					defaultConfig.SubOrgKey,
-					defaultConfig.FromAppid,
-					defaultConfig.Appid,
-					defaultConfig.UcenterAlias,
-					"",
-					[]map[string]string{
-						{
-							"appid":   defaultConfig.Appid,
-							"appkey":  v.Appkey,
-							"channel": channel,
-							"alias":   "default",
-							"version": "0.0.0",
-						},
+	records = getRecordDataBySpaceIds(spaceIds, defaultConfig.Host+"/deploy/record/exec/list", "POST")
+	for {
+		for _, v := range records {
+			channel := strconv.Itoa(v.Channel)
+			//构建token
+			curToken, _ := createToken(
+				[]byte(""),
+				defaultConfig.Issuer,
+				v.Appkey,
+				channel,
+				v.SpaceDeployId,
+				defaultConfig.OrgKey,
+				defaultConfig.SubOrgKey,
+				defaultConfig.FromAppid,
+				defaultConfig.Appid,
+				defaultConfig.UcenterAlias,
+				"",
+				[]map[string]string{
+					{
+						"appid":   defaultConfig.Appid,
+						"appkey":  v.Appkey,
+						"channel": channel,
+						"alias":   "default",
+						"version": "0.0.0",
 					},
-				)
-				id := strconv.Itoa(v.Id)
-				r, err := send(
-					map[string]string{"deploy_record_id": id, "firm_destroy": "1"},
-					map[string]string{"Authorization": "Bearer " + curToken},
-					defaultConfig.Host+defaultConfig.DelUrl,
-					"POST")
-				//r, err := send(
-				//	map[string]string{"appid": v.Appid, "version": v.Version, "runtime": v.Runtime},
-				//	map[string]string{"Authorization": "Bearer " + curToken},
-				//	"http://dp-a36vf7jujm9x7.gw002.oneitfarm.com/topology/topo/sync",
-				//	"POST")
-				if err != nil {
-					t.Log(err)
-				} else {
-					t.Log(v.SpaceId, "SUCCESS", string(r))
-				}
-				time.Sleep(1 * time.Second)
+				},
+			)
+			id := strconv.Itoa(v.Id)
+			r, err := send(
+				map[string]string{"deploy_record_id": id, "firm_destroy": "1"},
+				map[string]string{"Authorization": "Bearer " + curToken},
+				defaultConfig.Host+defaultConfig.DelUrl,
+				"POST")
+			//r, err := send(
+			//	map[string]string{"appid": v.Appid, "version": v.Version, "runtime": v.Runtime},
+			//	map[string]string{"Authorization": "Bearer " + curToken},
+			//	"http://dp-a36vf7jujm9x7.gw002.oneitfarm.com/topology/topo/sync",
+			//	"POST")
+			if err != nil {
+				t.Log(err)
+			} else {
+				t.Log(v.SpaceId, "SUCCESS", string(r))
 			}
 			time.Sleep(1 * time.Second)
 		}
-
+		time.Sleep(1 * time.Second)
 	}
 }
