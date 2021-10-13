@@ -11,6 +11,7 @@ type DeployRecord struct {
 	Runtime       string `json:"runtime"`
 	SpaceId       string `json:"space_id"`
 	SpaceDeployId string `json:"space_deploy_id"`
+	SubOrgKey     string `json:"sub_org_key"`
 }
 
 type Records []*DeployRecord

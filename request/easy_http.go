@@ -31,6 +31,9 @@ type config struct {
 	Url            string `json:"url"`
 	TaskUrl        string `json:"task_url"`
 	DelUrl         string `json:"del_url"`
+	ClearUrl       string `json:"clear_url"`
+	RetryUrl       string `json:"retry_url"`
+	RollbackUrl    string `json:"rollback_url"`
 	Method         string `json:"method"`
 }
 
@@ -55,6 +58,9 @@ func init() {
 		Url:            viper.Get("url").(string),
 		TaskUrl:        viper.Get("task_url").(string),
 		DelUrl:         viper.Get("del_url").(string),
+		ClearUrl:       viper.Get("clear_url").(string),
+		RetryUrl:       viper.Get("retry_url").(string),
+		RollbackUrl:    viper.Get("rollback_url").(string),
 		Method:         viper.Get("method").(string),
 	}
 	if err != nil {
@@ -124,6 +130,13 @@ func BatchExecOpTask(url string, waitSecond time.Duration, retry int, SkipRecord
 		start := 0
 		channel := strconv.Itoa(v.Channel)
 		deployRecordId := strconv.Itoa(v.DeployRecordId)
+		var subOrgKey string
+		if v.SubOrgKey != "" {
+			subOrgKey = v.SubOrgKey
+		}else{
+			subOrgKey = defaultConfig.SubOrgKey
+		}
+
 		curToken, _ := createToken(
 			[]byte(""),
 			defaultConfig.Issuer,
@@ -131,7 +144,7 @@ func BatchExecOpTask(url string, waitSecond time.Duration, retry int, SkipRecord
 			channel,
 			v.SpaceDeployId,
 			defaultConfig.OrgKey,
-			defaultConfig.SubOrgKey,
+			subOrgKey,
 			defaultConfig.FromAppid,
 			defaultConfig.Appid,
 			defaultConfig.UcenterAlias,

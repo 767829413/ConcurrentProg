@@ -7,6 +7,7 @@ type TaskRecord struct {
 	Channel        int    `json:"channel"`
 	DeployRecordId int    `json:"deploy_record_id"`
 	SpaceDeployId  string `json:"space_deploy_id"`
+	SubOrgKey      string `json:"sub_org_key"`
 }
 
 func GetDeployOpRecordList() (records PendingList, err error) {
